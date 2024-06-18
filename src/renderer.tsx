@@ -25,7 +25,19 @@
  *  });
  * ```
  */
+import React from "react";
+import { createRoot } from "react-dom/client";
 
-import './index.css';
+import "./index.css";
 
-console.log('👋 This message is being logged by "renderer.ts", included via Vite');
+const container = document.getElementById("root");
+if (!container) {
+  throw new Error("No root element found");
+}
+const root = createRoot(container);
+root.render(
+  <React.StrictMode>
+    <h1>💖 Hello World!</h1>
+    <p>Welcome to your Electron application.</p>
+  </React.StrictMode>
+);
