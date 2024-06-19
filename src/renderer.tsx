@@ -41,3 +41,9 @@ root.render(
     <p>Welcome to your Electron application.</p>
   </React.StrictMode>
 );
+
+if (window.pgp && window.pgp.listKeys) {
+  window.pgp.listKeys().then((result) => {
+    console.log("Received result:", result);
+  });
+}
