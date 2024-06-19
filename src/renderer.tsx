@@ -37,13 +37,11 @@ if (!container) {
 const root = createRoot(container);
 root.render(
   <React.StrictMode>
-    <h1>💖 Hello World!</h1>
+    <h1 className="underline">💖 Hello World!</h1>
     <p>Welcome to your Electron application.</p>
   </React.StrictMode>
 );
 
-if (window.pgp && window.pgp.listKeys) {
-  window.pgp.listKeys().then((result) => {
-    console.log("Received result:", result);
-  });
-}
+window.pgp.listKeys().then((result) => {
+  console.log("Received result:", result);
+});
