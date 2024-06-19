@@ -27,21 +27,30 @@
  */
 import React from "react";
 import { createRoot } from "react-dom/client";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
 import "@/lib/i18n";
+import { routeTree } from "./routeTree.gen";
 
 import "./index.css";
-import { App } from "./app/App";
 
 const container = document.getElementById("root");
 if (!container) {
   throw new Error("No root element found");
 }
+
+// Create the router instance
+const router = createRouter({ routeTree });
+// Register the router instance for type safety
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}
+
 const root = createRoot(container);
 root.render(
   <React.StrictMode>
-    <h1 className="underline">💖 Hello World!</h1>
-    <p>Welcome to your Electron application.</p>
-    <App />
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
 

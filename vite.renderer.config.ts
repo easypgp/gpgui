@@ -3,6 +3,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import viteTsconfigPaths from "vite-tsconfig-paths";
 import { pluginExposeRenderer } from "./vite.base.config";
+import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
 
 // https://vitejs.dev/config
 export default defineConfig((env) => {
@@ -34,6 +35,7 @@ export default defineConfig((env) => {
         },
       }),
       viteTsconfigPaths(),
+      TanStackRouterVite(),
     ],
     resolve: {
       preserveSymlinks: true,
