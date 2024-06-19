@@ -17,7 +17,24 @@ export default defineConfig((env) => {
     build: {
       outDir: `.vite/renderer/${name}`,
     },
-    plugins: [pluginExposeRenderer(name), react(), viteTsconfigPaths()],
+    plugins: [
+      pluginExposeRenderer(name),
+      react({
+        babel: {
+          plugins: [
+            [
+              "i18next-extract",
+              {
+                outputPath: "locales/{{locale}}/{{ns}}.json",
+                nsSeparator: "~",
+                keyAsDefaultValue: ["en"],
+              },
+            ],
+          ],
+        },
+      }),
+      viteTsconfigPaths(),
+    ],
     resolve: {
       preserveSymlinks: true,
     },
