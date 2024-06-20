@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Page } from "@/components/layout/Page";
 import { Navigation } from "@/components/layout/Navigation";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
-import { Link } from "@/components/Link";
+import { useConfiguration } from "@/lib/configuration/use-configuration";
 import { useState } from "react";
 
 interface LayoutProps {
@@ -14,7 +14,10 @@ interface LayoutProps {
 }
 
 export const Layout: React.FunctionComponent<LayoutProps> = () => {
-  const [stealthMode, setStealthMode] = useState(true);
+  const configuration = useConfiguration();
+  const [stealthMode, setStealthMode] = useState(
+    configuration.get("startInStealthMode")
+  );
 
   return (
     <Page

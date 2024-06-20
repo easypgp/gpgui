@@ -53,7 +53,3 @@ root.render(
     <RouterProvider router={router} />
   </React.StrictMode>
 );
-
-window.pgp.listKeys().then((result) => {
-  console.log("Received result:", result);
-});

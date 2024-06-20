@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from "electron";
 import path from "path";
 import { updateElectronApp } from "update-electron-app";
+import { registerIpcConfigurationMain } from "./ipc/configuration/ipc-configuration.main";
 import { registerIpcPgpMain } from "./ipc/pgp/ipc-pgp.main";
 
 updateElectronApp();
@@ -39,6 +40,7 @@ const createWindow = () => {
 app.on("ready", () => {
   createWindow();
   registerIpcPgpMain();
+  registerIpcConfigurationMain();
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
