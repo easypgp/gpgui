@@ -10,6 +10,6 @@ export const Index: React.FunctionComponent<IndexProps> = () => {
     </>
   );
 };
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_layout/")({
   component: Index,
 });
