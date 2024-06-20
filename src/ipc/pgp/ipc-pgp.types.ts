@@ -1,5 +1,3 @@
-import { GpgPublicKey } from "src/lib/pgp/pgp.types";
-
 /**
  * Params sent from the renderer to the main process
  */
@@ -31,14 +29,51 @@ export interface IpcPgpResult {
   exitCode: number;
 }
 
+export class IpcPgpError extends Error {
+  stdOut: string;
+  stdErr: string;
+  exitCode: number;
+
+  constructor(
+    message: string,
+    public readonly result: IpcPgpResult,
+    public readonly originalError?: Error
+  ) {
+    super(message);
+    Object.setPrototypeOf(this, new.target.prototype);
+    this.name = "IpcPgpError";
+    this.stdOut = result.stdOut;
+    this.stdErr = result.stdErr;
+    this.exitCode = result.exitCode;
+  }
+  toString() {
+    return `IpcPgpError: ${this.message}
+    stdErr: ${this.stdErr}
+    stdOut: ${this.stdOut}
+    exitCode: ${this.exitCode}
+    ${this.stack}
+    ${this.originalError && "originalError:"}
+    ${this.originalError?.toString()}`;
+  }
+  toJSON() {
+    return {
+      message: this.message,
+      stdErr: this.stdErr,
+      stdOut: this.stdOut,
+      exitCode: this.exitCode,
+      stack: this.stack,
+      originalError: this.originalError?.toString(),
+    };
+  }
+}
+
 /**
  * Actual call from renderer to main process, exposed through contextBridge.
  */
 export type IpcPgpCall = (params: IpcPgpParams) => Promise<IpcPgpResult>;
 
 export interface IpcPgpExposedCommands {
-  /** List all keys in the keyring */
-  listKeys: () => Promise<GpgPublicKey[]>;
+  call: IpcPgpCall;
 }
 
 declare global {

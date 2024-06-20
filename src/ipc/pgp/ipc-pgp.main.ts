@@ -1,6 +1,6 @@
 import { spawn } from "child_process";
 import { IpcMainInvokeEvent, ipcMain } from "electron";
-import { ipcPgpChannel } from "./ipc-pgp.constants";
+import { defaultTimeout, ipcPgpChannel } from "./ipc-pgp.constants";
 
 import { IpcPgpParams, IpcPgpResult } from "./ipc-pgp.types";
 
@@ -11,13 +11,14 @@ export const registerIpcPgpMain = async () => {
       _: IpcMainInvokeEvent,
       params: IpcPgpParams
     ): Promise<IpcPgpResult> => {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         const stdErr: string[] = [];
         const stdOut: string[] = [];
-        const pgp = spawn("gpg", [
-          ...params.args,
-          ...(params.plumbingArgs || []),
-        ]);
+        const pgp = spawn(
+          "/opt/homebrew/bin/gpg",
+          [...params.args, ...(params.plumbingArgs || [])],
+          { timeout: defaultTimeout, killSignal: "SIGKILL" }
+        );
 
         if (params.stdIn) {
           pgp.stdin.setDefaultEncoding("utf-8");
@@ -28,15 +29,15 @@ export const registerIpcPgpMain = async () => {
         pgp.stdout.on("data", (data) => {
           stdOut.push(data.toString());
         });
-        pgp.on("error", (data) => {
+        pgp.stderr.on("data", (data) => {
           stdErr.push(data.toString());
         });
-        pgp.on("close", (exitCode) => {
-          if (exitCode) {
-            return reject({
-              exitCode,
+        pgp.on("close", (exitCode, signal) => {
+          if (exitCode || signal === "SIGKILL") {
+            return resolve({
+              exitCode: exitCode || -1,
               stdOut: stdOut.join("\n"),
-              stdErr: stdErr.join("\n"),
+              stdErr: stdErr.join("\n") || `Signal: ${signal}`,
             });
           }
           return resolve({
