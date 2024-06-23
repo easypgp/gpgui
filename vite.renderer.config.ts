@@ -27,7 +27,10 @@ export default defineConfig((env) => {
               "i18next-extract",
               {
                 outputPath: "locales/{{locale}}/{{ns}}.json",
-                nsSeparator: "~",
+                defaultNS: "common",
+                keySeparator: null,
+                nsSeparator: null,
+                discardOldKeys: true,
                 keyAsDefaultValue: ["en"],
               },
             ],
