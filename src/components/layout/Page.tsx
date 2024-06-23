@@ -46,7 +46,7 @@ export const Page: React.FunctionComponent<PageProps> = (props) => {
         )}
         <ResizablePanel>
           <Suspense fallback={<LoadingPanel />}>
-            <div className="h-full w-full">{props.children}</div>
+            <div className="h-full w-full overflow-auto">{props.children}</div>
           </Suspense>
         </ResizablePanel>
         {props.rightPanel && (
