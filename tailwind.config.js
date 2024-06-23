@@ -2,10 +2,16 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
+  safelist: [
+    // All paddings for <Base />
+    { pattern: /p(b|t|l|r|x|y)-+/ },
+    // All margins for <Base />
+    { pattern: /m(b|t|l|r|x|y)-+/ },
   ],
   prefix: "",
   theme: {
@@ -74,4 +80,5 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};
+
