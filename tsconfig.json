@@ -10,6 +10,7 @@
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
+      "@/locales/*": ["locales/*"],
       "@/*": ["src/*"]
     },
     "outDir": "dist",
