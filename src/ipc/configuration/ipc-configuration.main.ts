@@ -8,6 +8,18 @@ import {
 
 const configurationFilePath = app.getPath("userData") + "/config.json";
 
+export const readConfiguration = async (): Promise<ConfigurationProps> => {
+  return new Promise((resolve) => {
+    readFile(configurationFilePath, {}, (_, content) => {
+      try {
+        resolve(JSON.parse(content.toString()));
+      } catch (error) {
+        resolve(defaultConfiguration);
+      }
+    });
+  });
+};
+
 export const registerIpcConfigurationMain = async () => {
   ipcMain.handle(
     `${IPC_CONFIGURATION_CHANNEL}:save`,
@@ -15,11 +27,18 @@ export const registerIpcConfigurationMain = async () => {
       _: IpcMainInvokeEvent,
       configuration: ConfigurationProps
     ): Promise<void> => {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
+        console.log(
+          configurationFilePath,
+          JSON.stringify(configuration, null, 2)
+        );
         writeFile(
           configurationFilePath,
           JSON.stringify(configuration, null, 2),
-          () => {
+          (err) => {
+            if (err) {
+              reject(err);
+            }
             resolve();
           }
         );
@@ -30,15 +49,7 @@ export const registerIpcConfigurationMain = async () => {
   ipcMain.handle(
     `${IPC_CONFIGURATION_CHANNEL}:load`,
     async (): Promise<ConfigurationProps> => {
-      return new Promise((resolve) => {
-        readFile(configurationFilePath, {}, (content) => {
-          try {
-            resolve(JSON.parse(content.toString()));
-          } catch {
-            resolve(defaultConfiguration);
-          }
-        });
-      });
+      return readConfiguration();
     }
   );
 };

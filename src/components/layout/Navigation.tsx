@@ -13,6 +13,7 @@ export const Navigation: React.FunctionComponent<NavigationProps> = () => {
     <>
       <Link to="/encrypt">{t("Encrypt")}</Link>
       <Link to="/decrypt">{t("Decrypt")}</Link>
+      <Link to="/configuration">{t("Configuration")}</Link>
     </>
   );
 };

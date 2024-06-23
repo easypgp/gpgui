@@ -5,4 +5,5 @@ export const IPC_CONFIGURATION_CHANNEL = "ipc-configuration";
 export const defaultConfiguration: ConfigurationProps = {
   startInStealthMode: true,
   askForPassphrase: true,
+  gpgPath: "/usr/bin/gpg",
 };

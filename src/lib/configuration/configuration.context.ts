@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createContext } from "react";
 
 export interface ConfigurationProps {
   /** Whether the application starts in stealth mode */
@@ -8,6 +8,8 @@ export interface ConfigurationProps {
    * or let the OS GUI do it
    */
   askForPassphrase: boolean;
+  /** Path to the PGP binary */
+  gpgPath: string;
 }
 
 export interface ConfigurationContextType {
@@ -19,12 +21,11 @@ export interface ConfigurationContextType {
     propName: K
   ) => ConfigurationProps[K];
 }
-export const configurationContext =
-  React.createContext<ConfigurationContextType>({
-    set: () => {
-      throw new Error("Not implemented");
-    },
-    get: () => {
-      throw new Error("Not implemented");
-    },
-  });
+export const configurationContext = createContext<ConfigurationContextType>({
+  set: () => {
+    throw new Error("Not implemented");
+  },
+  get: () => {
+    throw new Error("Not implemented");
+  },
+});
