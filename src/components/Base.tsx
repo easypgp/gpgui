@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { omit } from "lodash";
 
 type Spacing = "none" | "sm" | "md" | "lg" | "xl" | "0" | "1" | "2" | "3" | "4";
 
@@ -22,7 +23,21 @@ export interface PaddingProps {
   paddingRight?: Spacing;
 }
 
-export interface BaseProps extends MarginProps, PaddingProps {
+export interface BorderProps {
+  hasBorder?: boolean;
+  hasBorderTop?: boolean;
+  hasBorderBottom?: boolean;
+  hasBorderLeft?: boolean;
+  hasBorderRight?: boolean;
+  hasBorderX?: boolean;
+  hasBorderY?: boolean;
+}
+
+export interface BaseProps
+  extends MarginProps,
+    PaddingProps,
+    BorderProps,
+    React.HTMLAttributes<HTMLElement> {
   /** Add an extra className to Base wrapper */
   className?: string;
   /** The element type to render, default div */
@@ -47,7 +62,7 @@ const convertSpacingToClassSuffix = (spacing: Spacing): string => {
   }
 };
 
-const convertMarginPropsToClassNames = (props: BaseProps) => {
+const convertSpacingPropsToClassNames = (props: BaseProps) => {
   return Object.keys(props).map((key) => {
     const value = props[key as keyof BaseProps];
     if (!key.startsWith("margin") && !key.startsWith("padding")) {
@@ -82,12 +97,66 @@ const convertMarginPropsToClassNames = (props: BaseProps) => {
   });
 };
 
+const borderSuffixesMap = {
+  "": "",
+  Top: "-t",
+  Bottom: "-b",
+  Left: "-l",
+  Right: "-r",
+  X: "-x",
+  Y: "-y",
+};
+const convertBorderPropsToClassNames = (props: BorderProps) => {
+  return Object.keys(props).map((key) => {
+    const value = props[key as keyof BorderProps];
+    if (!key.startsWith("hasBorder")) {
+      return;
+    }
+    const transformedValue = value ? "" : "-0";
+
+    const suffix = key.replace("hasBorder", "");
+    return `border${borderSuffixesMap[suffix as keyof typeof borderSuffixesMap]}${transformedValue}`;
+  });
+};
+
 export const Base: React.FunctionComponent<BaseProps> = (props) => {
   const Component = props.as || "div";
 
+  const rest = omit(props, [
+    "margin",
+    "marginX",
+    "marginY",
+    "marginTop",
+    "marginBottom",
+    "marginLeft",
+    "marginRight",
+    "padding",
+    "paddingX",
+    "paddingY",
+    "paddingTop",
+    "paddingBottom",
+    "paddingLeft",
+    "paddingRight",
+    "hasBorder",
+    "hasBorderTop",
+    "hasBorderBottom",
+    "hasBorderLeft",
+    "hasBorderRight",
+    "hasBorderX",
+    "hasBorderY",
+    "className",
+    "as",
+    "children",
+  ]);
+
   return (
     <Component
-      className={cn(convertMarginPropsToClassNames(props), props.className)}
+      className={cn(
+        convertSpacingPropsToClassNames(props),
+        convertBorderPropsToClassNames(props),
+        props.className
+      )}
+      {...rest}
     >
       {props.children}
     </Component>

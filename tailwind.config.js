@@ -12,6 +12,9 @@ module.exports = {
     { pattern: /p(b|t|l|r|x|y)-+/ },
     // All margins for <Base />
     { pattern: /m(b|t|l|r|x|y)-+/ },
+    "border",
+    // All border for <Base />
+    { pattern: /border-(b|t|l|r|x|y)(-0)?/ },
   ],
   prefix: "",
   theme: {
