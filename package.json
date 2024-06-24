@@ -1,6 +1,6 @@
 {
   "name": "gpgui",
-  "productName": "gpgui",
+  "productName": "GPGui",
   "version": "0.0.1-dev",
   "private": true,
   "description": "An opinionated frontend for gpg command line",
