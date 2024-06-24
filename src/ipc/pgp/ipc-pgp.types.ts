@@ -72,8 +72,27 @@ export class IpcPgpError extends Error {
  */
 export type IpcPgpCall = (params: IpcPgpParams) => Promise<IpcPgpResult>;
 
+/**
+ * Params to change the context of the gpg command
+ *
+ * Creating a new context will delete any stealth existing context.
+ *
+ * Default context is the one used by gpg by default.
+ */
+export type IpcPgpChangeContextType = "stealth" | "default";
+
 export interface IpcPgpExposedCommands {
   call: IpcPgpCall;
+  /**
+   * Create a new context for GPG command and clear any existing stealth context
+   *
+   * Returns the new context path.
+   */
+  changeContext: (context: IpcPgpChangeContextType) => Promise<string>;
+  /**
+   * Get the current context
+   */
+  currentContext: () => string;
 }
 
 declare global {

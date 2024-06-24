@@ -1,13 +1,21 @@
+import { rmdir, mkdtemp, readdir } from "node:fs/promises";
+import { join } from "node:path";
 import { spawn } from "child_process";
-import { IpcMainInvokeEvent, ipcMain } from "electron";
+import { IpcMainInvokeEvent, ipcMain, app } from "electron";
 import { readConfiguration } from "../configuration/ipc-configuration.main";
-import { defaultTimeout, ipcPgpChannel } from "./ipc-pgp.constants";
+import { defaultTimeout, IPC_PGP_CHANNEL } from "./ipc-pgp.constants";
 
-import { IpcPgpParams, IpcPgpResult } from "./ipc-pgp.types";
+import {
+  IpcPgpChangeContextType,
+  IpcPgpParams,
+  IpcPgpResult,
+} from "./ipc-pgp.types";
+
+const stealthDirectoryPath = app.getPath("temp");
 
 export const registerIpcPgpMain = async () => {
   ipcMain.handle(
-    ipcPgpChannel,
+    `${IPC_PGP_CHANNEL}:call`,
     async (
       _: IpcMainInvokeEvent,
       params: IpcPgpParams
@@ -50,6 +58,33 @@ export const registerIpcPgpMain = async () => {
           });
         });
       });
+    }
+  );
+
+  ipcMain.handle(
+    `${IPC_PGP_CHANNEL}:changeContext`,
+    async (_: IpcMainInvokeEvent, contextType: IpcPgpChangeContextType) => {
+      // First clean all existing stealth context
+      const allStealthContexts = (await readdir(stealthDirectoryPath))
+        .filter((f) => f.startsWith("gpgenv-"))
+        .map((f) => join(stealthDirectoryPath, f));
+
+      await Promise.all(
+        allStealthContexts.map(async (f) => {
+          await rmdir(f, { recursive: true });
+        })
+      );
+
+      // Default context is the one used by gpg by default.
+      // so return empty
+      if (contextType === "default") {
+        return "";
+      }
+
+      // Create a new stealth context
+      const contextPath = await mkdtemp(join(stealthDirectoryPath, "gpgenv-"));
+
+      return contextPath;
     }
   );
 };
