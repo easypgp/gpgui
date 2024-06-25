@@ -21,6 +21,7 @@
   "Key imported": "Clé importée",
   "Language": "Langue",
   "New Key": "Nouvelle clé",
+  "No keys found": "Aucune clé trouvée",
   "Not found": "Non trouvé",
   "OK": "OK",
   "PGP path": "Chemin vers la commande gpg",

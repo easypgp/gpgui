@@ -6,7 +6,9 @@ import { Page } from "@/components/layout/Page";
 import { Navigation } from "@/components/layout/Navigation";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 import { useConfiguration } from "@/lib/configuration/use-configuration";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface LayoutProps {
   /** Add an extra className to  wrapper */
@@ -15,12 +17,24 @@ interface LayoutProps {
 
 export const Layout: React.FunctionComponent<LayoutProps> = () => {
   const configuration = useConfiguration();
+  const queryClient = useQueryClient();
   const [stealthMode, setStealthMode] = useState(
     configuration.get("startInStealthMode")
   );
+  useEffect(() => {
+    window.pgp.changeContext(stealthMode ? "stealth" : "default");
+    // Invalidatea any PGP releated query
+    queryClient.invalidateQueries({
+      predicate: (query) => query.queryKey[0] === "pgp",
+    });
+  }, [stealthMode, queryClient]);
 
   return (
     <Page
+      className={cn(
+        stealthMode && "dark",
+        "dark:*:bg-slate-500 dark:*:text-white"
+      )}
       header={
         <div className="flex justify-between p-2">
           <div className="flex items-center space-x-2">

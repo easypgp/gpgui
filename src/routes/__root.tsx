@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Suspense, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ConfigurationProvider } from "@/lib/configuration/ConfigurationProvider";
+import { LoadingIndicator } from "@/components/LoadingIndicator";
 
 export const Route = createRootRoute({
   component: () => {
@@ -10,7 +11,7 @@ export const Route = createRootRoute({
 
     return (
       <QueryClientProvider client={queryClient.current}>
-        <Suspense fallback="Loading...">
+        <Suspense fallback={<LoadingIndicator />}>
           <ConfigurationProvider>
             <Outlet />
           </ConfigurationProvider>
