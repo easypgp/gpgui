@@ -9,6 +9,15 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { LoadingIndicator } from "@/components/LoadingIndicator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { logger } from "@/lib/logger/renderer";
+import { Logger } from "@/lib/logger/logger.types";
 
 export const Configuration: React.FunctionComponent = () => {
   const config = useConfiguration();
@@ -43,7 +52,7 @@ export const Configuration: React.FunctionComponent = () => {
               </Label>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="start-in-stealth-mode" className="col-span-3">
+              <Label htmlFor="log-file-path" className="text-right">
                 {t("Log file path")}
               </Label>
               <div className="col-span-3">
@@ -55,6 +64,29 @@ export const Configuration: React.FunctionComponent = () => {
                   )}
                 </p>
               </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="log-level" className="text-right">
+                {t("Log Level")}
+              </Label>
+              <Select
+                onValueChange={(value) => {
+                  config.set("logLevel", value as keyof Logger);
+                  logger.setLevel(value as keyof Logger);
+                }}
+                value={config.get("logLevel")}
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder={t("log level")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {["debug", "info", "warn", "error"].map((level) => (
+                    <SelectItem key={level} value={level}>
+                      {level}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>

@@ -10,6 +10,8 @@ export interface ConfigurationProps {
   askForPassphrase: boolean;
   /** Path to the PGP binary */
   gpgPath: string;
+  /** Log level */
+  logLevel: "debug" | "info" | "warn" | "error";
 }
 
 export interface ConfigurationContextType {

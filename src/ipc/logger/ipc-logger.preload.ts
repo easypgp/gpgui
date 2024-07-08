@@ -1,3 +1,4 @@
+import { Logger } from "@/lib/logger/logger.types";
 import { ipcRenderer, contextBridge } from "electron";
 import { IPC_LOGGER_CHANNEL_NAME } from "./ipc-logger.constants";
 import {
@@ -16,6 +17,8 @@ export const registerIpcLoggerRenderer = async () => {
     error: (...args: unknown[]) => call({ level: "error", params: args }),
     getLogFilePath: () =>
       ipcRenderer.invoke(`${IPC_LOGGER_CHANNEL_NAME}:logFileName`),
+    setLevel: (level: keyof Logger) =>
+      ipcRenderer.invoke(`${IPC_LOGGER_CHANNEL_NAME}:setLevel`, level),
   };
 
   contextBridge.exposeInMainWorld("gpguiLogger", commands);

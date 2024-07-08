@@ -6,4 +6,5 @@ export const defaultConfiguration: ConfigurationProps = {
   startInStealthMode: true,
   askForPassphrase: true,
   gpgPath: "/usr/bin/gpg",
+  logLevel: "warn",
 };

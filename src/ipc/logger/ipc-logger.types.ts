@@ -5,6 +5,8 @@ export interface IpcLoggerExposedCommands {
   info: (...args: unknown[]) => void;
   warn: (...args: unknown[]) => void;
   error: (...args: unknown[]) => void;
+  getLogFilePath: () => Promise<string>;
+  setLevel: (level: keyof Logger) => void;
 }
 
 export interface IpcLoggerCallParams {

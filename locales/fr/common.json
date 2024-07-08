@@ -20,6 +20,7 @@
   "Go to home": "Aller à l'accueil",
   "Key imported": "Clé importée",
   "Language": "Langue",
+  "Log Level": "Niveau de log",
   "Log file path": "Chemin du fichier de log",
   "New Key": "Nouvelle clé",
   "No keys found": "Aucune clé trouvée",
@@ -32,5 +33,6 @@
   "Start in stealth mode?": "Démarrer en mode furtif ?",
   "Stealth Mode": "Mode furtif",
   "Type your message here.": "Tapez votre message ici.",
-  "language": "langue"
+  "language": "langue",
+  "log level": "niveau de log"
 }

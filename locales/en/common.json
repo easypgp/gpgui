@@ -20,6 +20,7 @@
   "Go to home": "Go to home",
   "Key imported": "Key imported",
   "Language": "Language",
+  "Log Level": "Log Level",
   "Log file path": "Log file path",
   "New Key": "New Key",
   "No keys found": "No keys found",
@@ -32,5 +33,6 @@
   "Start in stealth mode?": "Start in stealth mode?",
   "Stealth Mode": "Stealth Mode",
   "Type your message here.": "Type your message here.",
-  "language": "language"
+  "language": "language",
+  "log level": "log level"
 }

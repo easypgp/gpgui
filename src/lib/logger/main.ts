@@ -35,6 +35,12 @@ if (is.development) {
   winstonLogger.add(new winston.transports.File({ filename: logPath }));
 }
 
+export const setLevel = (level: keyof Logger) => {
+  winstonLogger.transports.forEach((transport) => {
+    transport.level = level;
+  });
+};
+
 export const createLogger = (name: string): Logger => ({
   debug: (...args: unknown[]) => winstonLogger.debug(name, ...args),
   info: (...args: unknown[]) => winstonLogger.info(name, ...args),
