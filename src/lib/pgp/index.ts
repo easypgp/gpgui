@@ -2,7 +2,12 @@ import { parseListKeysOutput } from "@/lib/pgp/list-keys";
 import { GpgPublicKey } from "@/lib/pgp/pgp.types";
 import { logger } from "@/lib/logger/renderer";
 
-import { IpcPgpCall, IpcPgpError, IpcPgpResult } from "@/ipc/pgp/ipc-pgp.types";
+import {
+  ConcealedParam,
+  IpcPgpCall,
+  IpcPgpError,
+  IpcPgpResult,
+} from "@/ipc/pgp/ipc-pgp.types";
 
 const ipcPgpCall: IpcPgpCall = async (params) => {
   try {
@@ -12,10 +17,11 @@ const ipcPgpCall: IpcPgpCall = async (params) => {
     }
     return result;
   } catch (error) {
-    logger.error("Error in ipcPgpCall", error);
     if (error instanceof IpcPgpError) {
+      logger.error("Error in ipcPgpCall", error, error.result);
       throw error;
     }
+    logger.error("Error in ipcPgpCall", error);
     throw new IpcPgpError(
       "Unknown IPC Gpg error",
       {
@@ -80,7 +86,13 @@ export const decrypt = async ({
         ? // When a passphrase is provided, the following
           // combination of flags prevents the passphras
           // dialog from appearing
-          ["--batch", "--pinentry-mode", "loopback", "--passphrase", passphrase]
+          [
+            "--batch",
+            "--pinentry-mode",
+            "loopback",
+            "--passphrase",
+            new ConcealedParam(passphrase),
+          ]
         : []),
     ],
     stdIn: message,

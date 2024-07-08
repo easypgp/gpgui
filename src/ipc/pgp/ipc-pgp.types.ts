@@ -1,10 +1,37 @@
+/** A parama that should be redacted in logs */
+export interface SerilizedConcealedParam {
+  __type: "ConcealedParam";
+  value: { value: string; isConcealed: boolean };
+}
+export class ConcealedParam {
+  constructor(
+    public readonly value: string,
+    public readonly isConcealed = true
+  ) {}
+  public toString = () => {
+    return this.isConcealed ? "<redacted>" : this.value;
+  };
+  public serialize = (): SerilizedConcealedParam => {
+    return {
+      __type: "ConcealedParam",
+      value: { value: this.value, isConcealed: this.isConcealed },
+    };
+  };
+  public static from = (serialized: SerilizedConcealedParam) => {
+    return new ConcealedParam(
+      serialized.value.value,
+      serialized.value.isConcealed
+    );
+  };
+}
+
 /**
  * Params sent from the renderer to the main process
  */
 export interface IpcPgpParams {
   contextId: string;
   /** Arguments to pass to the gpg command */
-  args: string[];
+  args: Array<string | ConcealedParam>;
   /**
    * Extra "plumbing" arguments for the gpg command
    *
@@ -14,10 +41,17 @@ export interface IpcPgpParams {
    * Those arguments are not meant to be displayed to the
    * user as it has no interest when learning gpg.
    */
-  plumbingArgs?: string[];
+  plumbingArgs?: Array<string | ConcealedParam>;
   /**
    * Input to pass to the stdin of the gpg command
    */
+  stdIn?: string;
+}
+
+export interface IpcPgpParamsSerialized {
+  contextId: string;
+  args: Array<string | SerilizedConcealedParam>;
+  plumbingArgs?: Array<string | SerilizedConcealedParam>;
   stdIn?: string;
 }
 /**

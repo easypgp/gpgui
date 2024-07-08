@@ -1,4 +1,4 @@
-import { rmdir, mkdtemp, readdir } from "node:fs/promises";
+import { rm, mkdtemp, readdir, access, constants } from "node:fs/promises";
 import { join } from "node:path";
 import { spawn } from "child_process";
 import { IpcMainInvokeEvent, ipcMain, app } from "electron";
@@ -6,10 +6,13 @@ import { readConfiguration } from "../configuration/ipc-configuration.main";
 import { defaultTimeout, IPC_PGP_CHANNEL } from "./ipc-pgp.constants";
 
 import {
+  ConcealedParam,
   IpcPgpChangeContextType,
   IpcPgpParams,
+  IpcPgpParamsSerialized,
   IpcPgpResult,
 } from "./ipc-pgp.types";
+import { logger } from "@/lib/logger/main";
 
 const stealthDirectoryPath = app.getPath("temp");
 
@@ -18,24 +21,68 @@ export const registerIpcPgpMain = async () => {
     `${IPC_PGP_CHANNEL}:call`,
     async (
       _: IpcMainInvokeEvent,
-      params: IpcPgpParams
+      paramsSerialized: IpcPgpParamsSerialized
     ): Promise<IpcPgpResult> => {
-      return readConfiguration().then((config) => {
-        return new Promise((resolve) => {
+      const config = await readConfiguration();
+      const gpgPath = config.gpgPath;
+      // Deserialize params
+      const params: IpcPgpParams = {
+        ...paramsSerialized,
+        args: paramsSerialized.args.map((arg) =>
+          typeof arg === "string" ? arg : ConcealedParam.from(arg)
+        ),
+        plumbingArgs: paramsSerialized.plumbingArgs?.map((arg) =>
+          typeof arg === "string" ? arg : ConcealedParam.from(arg)
+        ),
+      };
+
+      // Ensure the executable exists
+      try {
+        if (!gpgPath) {
+          throw new Error("GPG path not set");
+        }
+        await access(gpgPath, constants.X_OK);
+      } catch (error) {
+        return Promise.resolve({
+          stdOut: "",
+          stdErr: "GPG path does not exist",
+          exitCode: -1,
+        });
+      }
+
+      return new Promise((resolve) => {
+        const done = (result: IpcPgpResult) => {
+          if (result.exitCode !== 0) {
+            logger.error("Error in ipcPgpCall", result);
+            return resolve(result);
+          }
+          logger.debug("ipcPgpCall", result);
+          return resolve(result);
+        };
+        try {
           const stdErr: string[] = [];
           const stdOut: string[] = [];
+          logger.info(
+            "config.gpgPath",
+            [...params.args, ...(params.plumbingArgs || [])].map((arg) =>
+              typeof arg === "string" ? arg : arg.toString()
+            )
+          );
           const pgp = spawn(
             config.gpgPath,
-            [...params.args, ...(params.plumbingArgs || [])],
+            [...params.args, ...(params.plumbingArgs || [])].map((arg) =>
+              typeof arg === "string" ? arg : arg.value
+            ),
             { timeout: defaultTimeout, killSignal: "SIGKILL" }
           );
 
-          if (params.stdIn) {
-            pgp.stdin.setDefaultEncoding("utf-8");
-            pgp.stdin.write(params.stdIn);
-            pgp.stdin.end();
-          }
-
+          pgp.stdout.on("error", (error) => {
+            return resolve({
+              stdOut: "",
+              stdErr: error.toString(),
+              exitCode: -1,
+            });
+          });
           pgp.stdout.on("data", (data) => {
             stdOut.push(data.toString());
           });
@@ -44,19 +91,31 @@ export const registerIpcPgpMain = async () => {
           });
           pgp.on("close", (exitCode, signal) => {
             if (exitCode || signal === "SIGKILL") {
-              return resolve({
+              return done({
                 exitCode: exitCode || -1,
                 stdOut: stdOut.join("\n"),
                 stdErr: stdErr.join("\n") || `Signal: ${signal}`,
               });
             }
-            return resolve({
+            return done({
               stdOut: stdOut.join("\n"),
               stdErr: stdErr.join("\n"),
               exitCode: 0,
             });
           });
-        });
+
+          if (params.stdIn) {
+            pgp.stdin.setDefaultEncoding("utf-8");
+            pgp.stdin.write(params.stdIn);
+            pgp.stdin.end();
+          }
+        } catch (error) {
+          return done({
+            stdOut: "",
+            stdErr: error.toString(),
+            exitCode: -1,
+          });
+        }
       });
     }
   );
@@ -71,7 +130,7 @@ export const registerIpcPgpMain = async () => {
 
       await Promise.all(
         allStealthContexts.map(async (f) => {
-          await rmdir(f, { recursive: true });
+          await rm(f, { recursive: true });
         })
       );
 

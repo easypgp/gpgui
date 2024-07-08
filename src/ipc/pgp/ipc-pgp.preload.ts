@@ -1,7 +1,7 @@
 import { ipcRenderer, contextBridge } from "electron";
 import { IPC_PGP_CHANNEL } from "./ipc-pgp.constants";
 
-import { IpcPgpExposedCommands } from "./ipc-pgp.types";
+import { IpcPgpExposedCommands, IpcPgpParamsSerialized } from "./ipc-pgp.types";
 
 export const registerIpcPgpRenderer = async () => {
   let currentContext = "";
@@ -15,7 +15,16 @@ export const registerIpcPgpRenderer = async () => {
         "always",
         ...(params.plumbingArgs || []),
       ];
-      return ipcRenderer.invoke(`${IPC_PGP_CHANNEL}:call`, params);
+      const serializedParams: IpcPgpParamsSerialized = {
+        ...params,
+        args: params.args.map((arg) =>
+          typeof arg === "string" ? arg : arg.serialize()
+        ),
+        plumbingArgs: params.plumbingArgs?.map((arg) =>
+          typeof arg === "string" ? arg : arg.serialize()
+        ),
+      };
+      return ipcRenderer.invoke(`${IPC_PGP_CHANNEL}:call`, serializedParams);
     },
     changeContext: async (contextType) => {
       currentContext = await ipcRenderer.invoke(
