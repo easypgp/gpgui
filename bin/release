@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+
+# Create a new release
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+
+SCRIPT=release
+INFO="
+Create a new release from current commit.
+"
+
+function usage
+{
+   echo
+   echo $INFO
+   echo
+   echo -e " \033[4mUsage:\033[0m $SCRIPT type"
+   echo
+   echo "          Options :"
+   echo "              -h           display this help"
+   echo "              type         major | minor | patch"
+   echo
+   echo -e " \033[4mExemples:\033[0m "
+   echo -e "       $SCRIPT minor"
+   echo
+
+   exit 255
+}
+
+
+# Read parameters
+while getopts "h" options; do
+   case $options in
+    h|?) usage
+         ;;
+      *) usage
+         ;;
+  esac
+done
+# remove read arguments
+shift $(( OPTIND - 1 ))
+
+################################################################################
+# check_dependencies description
+# Globals:
+#   None
+# Arguments:
+#   None
+# Returns
+#   None
+################################################################################
+function check_dependencies {
+  command -v npm >/dev/null 2>&1 || {
+    echo >&2 "npm is required but it's not installed. Aborting."
+    exit 1
+  }
+  command -v git >/dev/null 2>&1 || {
+    echo >&2 "git is required but it's not installed. Aborting."
+    exit 1
+  }
+  command -v jq >/dev/null 2>&1 || {
+    echo >&2 "jq is required but it's not installed. Aborting."
+    exit 1
+  }
+}
+
+################################################################################
+# Program main function
+# Globals:
+#   None
+# Arguments:
+#   None
+# Returns
+#   None
+################################################################################
+function main {
+  o_release_variant="${1:-"patch"}"
+
+  [[ "${o_release_variant}" == "patch" ]] || \
+      [[ "${o_release_variant}" == "minor" ]] || \
+      [[ "${o_release_variant}" == "major" ]] || {
+      usage
+      exit 1
+  }
+
+  check_dependencies
+
+  cd "${DIR}"
+
+  # make sure we are on main branch
+  local main_branch="main"
+
+  git fetch -p origin "${main_branch}"
+  git checkout "origin/${main_branch}"
+
+  # bump version in package.json
+  npm version --no-git-tag-version "${o_release_variant}"
+
+  # get new version from package.json
+  local version=$(jq -r '.version' package.json)
+  local tag_name="v${version}"
+
+  # create a new branch
+  local release_branch="release-${version}"
+  git checkout -b "${release_branch}"
+
+  git add package.json package-lock.json
+  git commit -m "release: ${version}"
+  git tag -a "${tag_name}" -m "release: ${version}"
+
+  git push origin "${release_branch}" "${tag_name}"
+
+  # go back to original branch
+  git switch "@{-2}"
+
+  echo "Release ${version} created"
+  echo "Don't forget to create a PR to merge ${release_branch} into ${main_branch}"
+  echo "OR, do it manually:"
+  echo "  git checkout ${main_branch} ; git pull origin ${main_branch} ; git merge --no-ff ${release_branch}"
+}
+
+main "$@"
