@@ -14,6 +14,8 @@ export const registerIpcLoggerRenderer = async () => {
     info: (...args: unknown[]) => call({ level: "info", params: args }),
     warn: (...args: unknown[]) => call({ level: "warn", params: args }),
     error: (...args: unknown[]) => call({ level: "error", params: args }),
+    getLogFilePath: () =>
+      ipcRenderer.invoke(`${IPC_LOGGER_CHANNEL_NAME}:logFileName`),
   };
 
   contextBridge.exposeInMainWorld("gpguiLogger", commands);

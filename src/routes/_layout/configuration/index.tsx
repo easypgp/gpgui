@@ -5,12 +5,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useConfiguration } from "@/lib/configuration/use-configuration";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
+import { LoadingIndicator } from "@/components/LoadingIndicator";
 
 export const Configuration: React.FunctionComponent = () => {
   const config = useConfiguration();
   const { t } = useTranslation("common");
+
+  const logFilePath = useQuery({
+    queryKey: ["logFileName"],
+    queryFn: () => window.gpguiLogger.getLogFilePath(),
+  });
+
   return (
     <Page className="mx-auto my-4 w-96">
       <Title marginBottom="lg">{t("Configuration")}</Title>
@@ -33,6 +41,20 @@ export const Configuration: React.FunctionComponent = () => {
               <Label htmlFor="start-in-stealth-mode" className="col-span-3">
                 {t("Start in stealth mode?")}
               </Label>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="start-in-stealth-mode" className="col-span-3">
+                {t("Log file path")}
+              </Label>
+              <div className="col-span-3">
+                <p>
+                  {logFilePath.isSuccess ? (
+                    logFilePath.data
+                  ) : (
+                    <LoadingIndicator />
+                  )}
+                </p>
+              </div>
             </div>
           </div>
         </div>

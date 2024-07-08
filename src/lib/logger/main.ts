@@ -16,6 +16,8 @@ const combineMessageAndSplat = (): winston.Logform.Format => ({
   },
 });
 
+export const logPath = join(app.getPath("userData"), "main.log");
+
 const winstonLogger = winston.createLogger({
   format: winston.format.combine(
     winston.format.timestamp(),
@@ -30,7 +32,6 @@ const winstonLogger = winston.createLogger({
 if (is.development) {
   winstonLogger.add(new winston.transports.Console());
 } else {
-  const logPath = join(app.getPath("userData"), "main.log");
   winstonLogger.add(new winston.transports.File({ filename: logPath }));
 }
 
