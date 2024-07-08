@@ -1,5 +1,6 @@
 import { parseListKeysOutput } from "@/lib/pgp/list-keys";
 import { GpgPublicKey } from "@/lib/pgp/pgp.types";
+import { logger } from "@/lib/logger/renderer";
 
 import { IpcPgpCall, IpcPgpError, IpcPgpResult } from "@/ipc/pgp/ipc-pgp.types";
 
@@ -11,6 +12,7 @@ const ipcPgpCall: IpcPgpCall = async (params) => {
     }
     return result;
   } catch (error) {
+    logger.error("Error in ipcPgpCall", error);
     if (error instanceof IpcPgpError) {
       throw error;
     }
@@ -24,6 +26,15 @@ const ipcPgpCall: IpcPgpCall = async (params) => {
       error
     );
   }
+};
+
+export const version = async (): Promise<string> => {
+  const result = await ipcPgpCall({
+    contextId: "",
+    args: ["--version"],
+  });
+
+  return result.stdOut;
 };
 
 /** List all public keys in the keyring */

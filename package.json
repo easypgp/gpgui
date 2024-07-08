@@ -76,6 +76,7 @@
     "react-i18next": "^14.1.2",
     "react-resizable-panels": "^2.0.19",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "winston": "^3.13.0"
   }
 }

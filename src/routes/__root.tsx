@@ -4,6 +4,7 @@ import { Suspense, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ConfigurationProvider } from "@/lib/configuration/ConfigurationProvider";
 import { LoadingIndicator } from "@/components/LoadingIndicator";
+import { logger } from "@/lib/logger/renderer";
 
 export const Route = createRootRoute({
   component: () => {
@@ -20,6 +21,7 @@ export const Route = createRootRoute({
     );
   },
   notFoundComponent: () => {
+    logger.error("Not found");
     const { t } = useTranslation("common");
     return (
       <div>

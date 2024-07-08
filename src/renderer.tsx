@@ -29,6 +29,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import "@/lib/i18n";
+import { logger } from "@/lib/logger/renderer";
 import { routeTree } from "./routeTree.gen";
 
 import "./index.css";
@@ -46,6 +47,8 @@ declare module "@tanstack/react-router" {
     router: typeof router;
   }
 }
+
+logger.info("Starting renderer process");
 
 const root = createRoot(container);
 root.render(

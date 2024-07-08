@@ -1,8 +1,12 @@
 import { app, BrowserWindow } from "electron";
 import path from "path";
 import { updateElectronApp } from "update-electron-app";
+
+import { logger } from "@/lib/logger/main";
+import { is } from "@/lib/is";
 import { registerIpcConfigurationMain } from "./ipc/configuration/ipc-configuration.main";
 import { registerIpcPgpMain } from "./ipc/pgp/ipc-pgp.main";
+import { registerIpcLoggerMain } from "./ipc/logger/ipc-logger.main";
 
 updateElectronApp();
 
@@ -12,6 +16,7 @@ if (require("electron-squirrel-startup")) {
 }
 
 const createWindow = () => {
+  logger.info("Creating window");
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
@@ -30,8 +35,10 @@ const createWindow = () => {
     );
   }
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (is.development) {
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools();
+  }
 };
 
 // This method will be called when Electron has finished
@@ -39,6 +46,7 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.on("ready", () => {
   createWindow();
+  registerIpcLoggerMain();
   registerIpcPgpMain();
   registerIpcConfigurationMain();
 });
