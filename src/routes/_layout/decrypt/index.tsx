@@ -80,7 +80,9 @@ export const Decrypt: React.FunctionComponent<DecryptProps> = (props) => {
             {t("Decrypt")}
           </Button>
         </div>
-        <div>{decryptedMessage}</div>
+        <div>
+          <pre>{decryptedMessage}</pre>
+        </div>
         <AskPasswordDialog
           open={showPassphraseDialog}
           onClose={() => {
