@@ -61,7 +61,7 @@
     "@radix-ui/react-switch": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.0",
     "@tanstack/react-query": "^5.56.2",
-    "@tanstack/react-router": "^1.39.4",
+    "@tanstack/react-router": "^1.58.12",
     "@vitejs/plugin-react": "^4.3.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

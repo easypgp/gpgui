@@ -88,14 +88,73 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({
-  LayoutRoute: LayoutRoute.addChildren({
-    LayoutIndexRoute,
-    LayoutConfigurationIndexRoute,
-    LayoutDecryptIndexRoute,
-    LayoutEncryptIndexRoute,
-  }),
-})
+interface LayoutRouteChildren {
+  LayoutIndexRoute: typeof LayoutIndexRoute
+  LayoutConfigurationIndexRoute: typeof LayoutConfigurationIndexRoute
+  LayoutDecryptIndexRoute: typeof LayoutDecryptIndexRoute
+  LayoutEncryptIndexRoute: typeof LayoutEncryptIndexRoute
+}
+
+const LayoutRouteChildren: LayoutRouteChildren = {
+  LayoutIndexRoute: LayoutIndexRoute,
+  LayoutConfigurationIndexRoute: LayoutConfigurationIndexRoute,
+  LayoutDecryptIndexRoute: LayoutDecryptIndexRoute,
+  LayoutEncryptIndexRoute: LayoutEncryptIndexRoute,
+}
+
+const LayoutRouteWithChildren =
+  LayoutRoute._addFileChildren(LayoutRouteChildren)
+
+export interface FileRoutesByFullPath {
+  '': typeof LayoutRouteWithChildren
+  '/': typeof LayoutIndexRoute
+  '/configuration': typeof LayoutConfigurationIndexRoute
+  '/decrypt': typeof LayoutDecryptIndexRoute
+  '/encrypt': typeof LayoutEncryptIndexRoute
+}
+
+export interface FileRoutesByTo {
+  '/': typeof LayoutIndexRoute
+  '/configuration': typeof LayoutConfigurationIndexRoute
+  '/decrypt': typeof LayoutDecryptIndexRoute
+  '/encrypt': typeof LayoutEncryptIndexRoute
+}
+
+export interface FileRoutesById {
+  __root__: typeof rootRoute
+  '/_layout': typeof LayoutRouteWithChildren
+  '/_layout/': typeof LayoutIndexRoute
+  '/_layout/configuration/': typeof LayoutConfigurationIndexRoute
+  '/_layout/decrypt/': typeof LayoutDecryptIndexRoute
+  '/_layout/encrypt/': typeof LayoutEncryptIndexRoute
+}
+
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths: '' | '/' | '/configuration' | '/decrypt' | '/encrypt'
+  fileRoutesByTo: FileRoutesByTo
+  to: '/' | '/configuration' | '/decrypt' | '/encrypt'
+  id:
+    | '__root__'
+    | '/_layout'
+    | '/_layout/'
+    | '/_layout/configuration/'
+    | '/_layout/decrypt/'
+    | '/_layout/encrypt/'
+  fileRoutesById: FileRoutesById
+}
+
+export interface RootRouteChildren {
+  LayoutRoute: typeof LayoutRouteWithChildren
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  LayoutRoute: LayoutRouteWithChildren,
+}
+
+export const routeTree = rootRoute
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* prettier-ignore-end */
 
