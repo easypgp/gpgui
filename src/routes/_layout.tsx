@@ -4,7 +4,7 @@ import { StealthModeSwitcher } from "@/components/layout/StealthModeSwitcher";
 import { Toaster } from "@/components/ui/toaster";
 import { Page } from "@/components/layout/Page";
 import { Navigation } from "@/components/layout/Navigation";
-import { Outlet, createFileRoute } from "@tanstack/react-router";
+import { Outlet, createFileRoute, Link } from "@tanstack/react-router";
 import { useConfiguration } from "@/lib/configuration/use-configuration";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -38,9 +38,11 @@ export const Layout: React.FunctionComponent<LayoutProps> = () => {
       header={
         <div className="flex justify-between p-2">
           <div className="flex items-center space-x-2">
-            <h1 className="text-3xl font-bold">
-              <LockIcon /> gpgUI
-            </h1>
+            <Link to="/">
+              <h1 className="text-3xl font-bold">
+                <LockIcon /> gpgUI
+              </h1>
+            </Link>
             <Navigation />
           </div>
           <div className="flex items-center space-x-2">

@@ -27,7 +27,11 @@
  */
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { RouterProvider, createRouter } from "@tanstack/react-router";
+import {
+  RouterProvider,
+  createRouter,
+  createMemoryHistory,
+} from "@tanstack/react-router";
 import "@/lib/i18n";
 import { logger } from "@/lib/logger/renderer";
 import { routeTree } from "./routeTree.gen";
@@ -39,8 +43,16 @@ if (!container) {
   throw new Error("No root element found");
 }
 
+// Create a memory history instance to initialize the router so it doesn't
+// break when compiled:
+const memoryHistory = createMemoryHistory({
+  initialEntries: ["/"], // Pass your initial url
+});
 // Create the router instance
-const router = createRouter({ routeTree });
+const router = createRouter({
+  routeTree,
+  history: memoryHistory,
+});
 // Register the router instance for type safety
 declare module "@tanstack/react-router" {
   interface Register {
