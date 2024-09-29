@@ -16,6 +16,7 @@
   "Failed to decrypt message": "Échec du déchiffrement du message",
   "Failed to encrypt message": "Échec du chiffrement du message",
   "Failed to import key": "Échec de l'importation de la clé",
+  "GPGui is a simple graphic intergace built on top of gpg.": "GPGui est une interface graphique simple construite sur gpg.",
   "General": "Général",
   "Go to home": "Aller à l'accueil",
   "Key imported": "Clé importée",
@@ -33,6 +34,7 @@
   "Start in stealth mode?": "Démarrer en mode furtif ?",
   "Stealth Mode": "Mode furtif",
   "Type your message here.": "Tapez votre message ici.",
+  "Welcome to GPGui": "Bienvenue dans GPGui",
   "language": "langue",
   "log level": "niveau de log"
 }

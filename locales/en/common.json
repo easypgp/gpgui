@@ -16,6 +16,7 @@
   "Failed to decrypt message": "Failed to decrypt message",
   "Failed to encrypt message": "Failed to encrypt message",
   "Failed to import key": "Failed to import key",
+  "GPGui is a simple graphic intergace built on top of gpg.": "GPGui is a simple graphic intergace built on top og gpg.",
   "General": "General",
   "Go to home": "Go to home",
   "Key imported": "Key imported",
@@ -33,6 +34,7 @@
   "Start in stealth mode?": "Start in stealth mode?",
   "Stealth Mode": "Stealth Mode",
   "Type your message here.": "Type your message here.",
+  "Welcome to GPGui": "Welcome to GPGui",
   "language": "language",
   "log level": "log level"
 }
