@@ -30,6 +30,7 @@
   "PGP path": "Chemin vers la commande gpg",
   "Paste your encrypted message here": "Collez votre message chiffré ici",
   "Recipient: {{keyId}}": "Destinataire : {{keyId}}",
+  "See latest releases": "Voir les dernières versions",
   "Select recipent key": "Sélectionner la clé du destinataire",
   "Start in stealth mode?": "Démarrer en mode furtif ?",
   "Stealth Mode": "Mode furtif",

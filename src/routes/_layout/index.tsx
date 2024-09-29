@@ -10,6 +10,15 @@ export const Index: React.FunctionComponent<IndexProps> = () => {
     <>
       <h1 className="underline">{t("Welcome to GPGui")}</h1>
       <p>{t("GPGui is a simple graphic intergace built on top of gpg.")}</p>
+      <p>
+        {t("See latest releases")}{" "}
+        <a
+          className="text-blue-500 hover:underline"
+          href="https://github.com/easypgp/gpgui/releases"
+        >
+          on GitHub (easypgp/gpgui)
+        </a>
+      </p>
     </>
   );
 };
