@@ -1,7 +1,7 @@
 {
   "name": "gpgui",
   "productName": "GPGui",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "An opinionated frontend for gpg command line",
   "repository": "https://github.com/easypgp/gpgui",
