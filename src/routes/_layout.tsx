@@ -9,6 +9,7 @@ import { useConfiguration } from "@/lib/configuration/use-configuration";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
+import { CommandHistory } from "@/components/pgp/CommandHistory";
 
 interface LayoutProps {
   /** Add an extra className to  wrapper */
@@ -54,6 +55,7 @@ export const Layout: React.FunctionComponent<LayoutProps> = () => {
           </div>
         </div>
       }
+      footer={<CommandHistory />}
     >
       <Outlet />
       <Toaster />
