@@ -5,8 +5,11 @@ import { IpcPgpExposedCommands, IpcPgpParamsSerialized } from "./ipc-pgp.types";
 
 export const registerIpcPgpRenderer = async () => {
   let currentContext = "";
+  const historyOfCommands: IpcPgpParamsSerialized[] = [];
+
   const commands: IpcPgpExposedCommands = {
     call: (params) => {
+      historyOfCommands.push(params);
       params.plumbingArgs = [
         // Inject currentContext into plumbingArgs
         ...(currentContext ? ["--homedir", currentContext] : []),
@@ -34,6 +37,7 @@ export const registerIpcPgpRenderer = async () => {
       return currentContext;
     },
     currentContext: () => currentContext,
+    history: () => historyOfCommands,
   };
 
   contextBridge.exposeInMainWorld("pgp", commands);
