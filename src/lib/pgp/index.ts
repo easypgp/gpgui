@@ -114,10 +114,14 @@ export const importKey = async ({
 
   return result;
 };
+export const history = () => {
+  return window.pgp.history();
+};
 
 export const pgp = {
   listKeys,
   encrypt,
   decrypt,
   importKey,
+  history,
 };

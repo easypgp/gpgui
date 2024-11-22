@@ -127,6 +127,10 @@ export interface IpcPgpExposedCommands {
    * Get the current context
    */
   currentContext: () => string;
+  /**
+   * Get the history of commands executed
+   */
+  history: () => IpcPgpParamsSerialized[];
 }
 
 declare global {
